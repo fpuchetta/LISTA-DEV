@@ -12,6 +12,5 @@ int main()
 {
 	pa2m_nuevo_grupo("============== ??? ===============");
 	prueba_simple();
-
 	return pa2m_mostrar_reporte();
 }

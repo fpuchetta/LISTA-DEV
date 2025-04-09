@@ -31,9 +31,9 @@ int main(int argc, char *argv[])
 	lista_insertar(l, &dos);
 	lista_insertar(l, &tres);
 
-	printf("Muestro los elementos usando el iterador interno:\n");
-	int posicion = 0;
-	lista_iterar(l, mostrar_int, &posicion);
+//	printf("Muestro los elementos usando el iterador interno:\n");
+//	int posicion = 0;
+//	lista_iterar(l, mostrar_int, &posicion);
 
 	printf("\nMuestro los elementos usando lista_obtener_elemento:\n");
 	for (int i = 0; i < lista_tamanio(l); i++) {
@@ -41,17 +41,17 @@ int main(int argc, char *argv[])
 		printf("Elemento en posicion %i: %i\n", i, *n);
 	}
 
-	printf("\nMuestro los elementos usando el iterador externo:\n");
-	posicion = 0;
-	lista_iterador_t *li;
-	for (li = lista_iterador_crear(l);
-	     lista_iterador_quedan_elementos_por_recorrer(li);
-	     lista_iterador_proxima_iteracion(li)) {
-		int *n = lista_iterador_obtener_elemento(li);
-		printf("Elemento en posicion %i: %i\n", posicion, *n);
-		posicion++;
-	}
-	lista_iterador_destruir(li);
+//	printf("\nMuestro los elementos usando el iterador externo:\n");
+//	posicion = 0;
+//	lista_iterador_t *li;
+//	for (li = lista_iterador_crear(l);
+//	     lista_iterador_quedan_elementos_por_recorrer(li);
+//	     lista_iterador_proxima_iteracion(li)) {
+//		int *n = lista_iterador_obtener_elemento(li);
+//		printf("Elemento en posicion %i: %i\n", posicion, *n);
+//		posicion++;
+//	}
+//	lista_iterador_destruir(li);
 
 	lista_destruir(l);
 	return 0;
