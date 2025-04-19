@@ -88,18 +88,7 @@ Opte por esta implementacion debido a que logra una correcta funcionalidad de re
 ### Lista:
 
 ##### Funcion `lista_t *lista_crear()`:
-```c
-{
-	lista_t *lista_creada = malloc(sizeof(lista_t));
-	if (!lista_creada) {
-		return NULL;
-	}
-	lista_creada->principio = NULL;
-	lista_creada->final = NULL;
-	lista_creada->cantidad_elementos = 0;
-	return lista_creada;
-}
-```
+
 Como su nombre indica, a la hora de comenzar a usar el TDA lista esta es la primer funcion que debe ser invocada por el usuario, la cual se encarga de alojar memoria para una lista en el heap e inicializar la misma vacia. A la hora de visualizar como quedaria la distribucion de memoria podemos denotar algo como lo siguiente:
 
 <div align="center">
@@ -109,27 +98,6 @@ Como su nombre indica, a la hora de comenzar a usar el TDA lista esta es la prim
 Debido a que la misma simplemente consta de `acciones constantes` podemos analizar la complejidad de esta funcion como multiples declaraciones o acciones constantes, dejando visto que su complejidad computacional es `O(1)`.
 
 ##### Funcion `bool lista_insertar(lista_t *lista, void *elemento)`:
-
-```c
-{
-	if (!lista)
-		return false;
-	nodo_t *nodo_a_agregar = malloc(sizeof(nodo_t));
-	if (nodo_a_agregar == NULL)
-		return false;
-	nodo_a_agregar->elemento = elemento;
-	nodo_a_agregar->siguiente = NULL;
-	if (lista->final == NULL) {
-		lista->final = nodo_a_agregar;
-		lista->principio = lista->final;
-	} else {
-		lista->final->siguiente = nodo_a_agregar;
-		lista->final = nodo_a_agregar;
-	}
-	lista->cantidad_elementos += 1;
-	return true;
-}
-```
 
 Esta funcion inserta un elemento al final de la misma, es decir, en aquel nodo el cual si siguiente es NULL. De esta forma, se forman 2 posibles casos. Que la lista ya contenga elementos o que la lista este vacia.
 
@@ -161,37 +129,6 @@ En este caso podemos denotar que ambos casos no son identicos pero denotan una c
 
 ##### Funcion `bool lista_insertar_en_posicion(lista_t *lista, int posicion, void *elemento)`:
 
-```c
-{
-	if (!lista || posicion < 0 ||
-	    (posicion > lista->cantidad_elementos &&
-	     lista->cantidad_elementos != 0))
-		return false;
-	if (posicion == lista->cantidad_elementos)
-		return lista_insertar(lista, elemento);
-	nodo_t *nodo_nuevo = malloc(sizeof(nodo_t));
-	if (!nodo_nuevo)
-		return false;
-	nodo_nuevo->elemento = elemento;
-	if (posicion == 0 && lista->cantidad_elementos == 0) {
-		nodo_nuevo->siguiente = NULL;
-		lista->principio = nodo_nuevo;
-		lista->final = nodo_nuevo;
-	} else if (posicion == 0) {
-		nodo_nuevo->siguiente = lista->principio;
-		lista->principio = nodo_nuevo;
-	} else {
-		nodo_t *anterior = iterar_hasta_posicion(lista, posicion - 1);
-		nodo_nuevo->siguiente = anterior->siguiente;
-		anterior->siguiente = nodo_nuevo;
-		if (nodo_nuevo->siguiente == NULL)
-			lista->final = nodo_nuevo;
-	}
-	lista->cantidad_elementos += 1;
-	return true;
-}
-```
-
 A diferencia de la funcion anterior, esta funcion tiene la posibilidad de insertar en cualquier posicion de la lista. De esta forma, se dan 3 posibles escenarios `insertar principio`, `insertar final` o `insertar cualquier otra posicion`. La funcion esta implementada de forma tal que en caso detener que insertar en el final de la misma se llame a **lista_insertar** la cual ya tiene la logica pertinente para insertar un elemento en el final de la lista. De cualquier otra manera, la funcion se encarga de evaluar si la insercion sera con una lista vacia o con elementos en caso de ser `la posicion inicial`, o si se trata de una insercion `distinta al final o inicio`.
 
 Por un lado, en caso de tener que insertar al inicio con la lista vacia, el diagrama y la forma de actuar es el mismo caso que `lista_insertar` previamente explicado, por otro lado, en caso de tener que insertar al inicio en una lista con elementos primero proponemos que nuestro nodo nuevo apunte al siguiente del inicio y luego decimos que nuestro puntero al inicio apunte a nuestro nodo nuevo, similar a la insercion en el final.
@@ -204,60 +141,14 @@ Vemos que se llama a la funcion `iterar_hasta_posicion` la cual se encarga de re
 
 ##### Funcion `size_t lista_tamanio(lista_t *lista)`:
 
-```c
-{
-	return (!lista) ? 0 : lista->cantidad_elementos;
-}
-```
-
 Se encarga de acceder al campo del struct lista y devolver la cantidad de elementos correspondientes, posee una complejidad computacional constante `O(1)`.
 
 ##### Funcion `void *lista_obtener_elemento(lista_t *lista, int posicion)`:
-
-```c
-{
-	if (!lista || posicion < 0 || posicion >= lista->cantidad_elementos)
-		return NULL;
-	nodo_t *actual = iterar_hasta_posicion(lista, posicion);
-	return actual->elemento;
-}
-```
 
 Esta funcion se encarga de iterar hasta la posicion pasada por parametro para luego devolver el puntero al elemento guardado en dicho nodo, en caso de que la posicion sea invalida devuelve NULL. Al utilizar nuevamente la funcion de `iterar_hasta_posicion` en el peor de los casos la funcion se ejecuta N veces, siendo N la cantidad de nodos o elementos, de esta forma decimos que la funcion tiene una complejidad de `O(n)`.
 
 ##### Funcion `void *lista_sacar_de_posicion(lista_t *lista, int posicion)`:
 
-```c
-{
-	if (!lista)
-		return NULL;
-	nodo_t *nodo_anterior;
-	nodo_t *aux;
-	void *retorno;
-	if (lista->cantidad_elementos == 0)
-		return NULL;
-	if (posicion == 0) {
-		aux = lista->principio;
-		lista->principio = aux->siguiente;
-		if (lista->cantidad_elementos == 1)
-			lista->final = NULL;
-	} else {
-		nodo_anterior = iterar_hasta_posicion(lista, posicion - 1);
-		if (!nodo_anterior->siguiente)
-			return NULL;
-
-		aux = nodo_anterior->siguiente;
-
-		nodo_anterior->siguiente = aux->siguiente;
-		if (!nodo_anterior->siguiente)
-			lista->final = nodo_anterior;
-	}
-	retorno = aux->elemento;
-	free(aux);
-	lista->cantidad_elementos -= 1;
-	return retorno;
-}
-```
 Como las funciones previamente analizadas, consta de dos casos, los cuales son una llamada a la funcion con una posicion accesible mediante los punteros del struct, o una llamada a la funcion con una posicion arbitratia. Aun llamando a la funcion con la ultima posicion, se debe iterar hasta dicho nodo, debido a que se busca el anterior. De esta forma, lo que hace la funcion es guardar en un auxiliar el nodo a eliminar para luego reconectar la lista del nodo anterior iterado con el siguiente del nodo a eliminar.
 
 En el caso de eliminar un nodo de una posicion arbitraria puede representarse por los siguientes pasos:
@@ -271,93 +162,23 @@ En el caso de eliminar un nodo de una posicion arbitraria puede representarse po
 A la hora de analizar la complejidad de esta funcion, vemos que nuevamente en el peor de los escenarios del if, debemos iterar hasta n-1 elementos, y hacer acciones constantes con ellos, entonces podemos decir que la complejidad de la funcion es `O(n)`.
 
 ##### Funcion `int lista_buscar_posicion(lista_t *lista, void *elemento)`:
-```c
-{
-	if (!lista)
-		return -1;
-	bool encontrado = false;
-	nodo_t *actual = lista->principio;
-	int posicion = 0;
-	while (!encontrado && actual != NULL) {
-		if (actual->elemento == elemento) {
-			encontrado = true;
-		} else {
-			actual = actual->siguiente;
-			posicion++;
-		}
-	}
-	return (encontrado) ? posicion : -1;
-}
-```
 
 Esta funcion busca iterar por la lista de `N` elementos hasta encontrar aquel nodo el cual tenga el mismo puntero al elemento pasado por parametro, es decir, se comparan punteros debido a que no hay una funcion de comparacion por parametro. De esta forma, en caso de haber iterado todos los elementos si se encontro se devuelve la posicion, en caso contrario se devuelve -1. En el peor de los casos, esta funcion iteraria toda la lista y nunca encontraria el mismo puntero por lo cual se haria  N veces el acceso a cada nodo y la comparacion del puntero al elemento, por lo cual, la complejidad de esta funcion es `O(n)`.
 
 ##### Funcion `void *lista_sacar_elemento(lista_t *lista, void *elemento)`:
 
-```c
-{
-	if (!lista)
-		return NULL;
-	int posicion = lista_buscar_posicion(lista, elemento);
-	if (posicion == -1)
-		return NULL;
-	void* retorno=lista_sacar_de_posicion(lista,posicion);
-	return retorno;
-}
-```
-
 Como el nombre indica, se encarga de sacar el nodo correspondiente al puntero del elemento pasado por parametro, es decir, nuevamente se comparan punteros. Es llamada con el elemento pasado como parametro para luego volver a aplicar la funcion `lista_sacar_de_posicion` con la posicion encontrada. De esta forma, como visualizamos previamente poseemos 3 casos de accion siendo el peor de todos el caso en el cual nos piden un elemento al final de la lista, de esta forma, al iterar `N` elementos 2 veces, la complejidad seria 2n y en notacion Big O, la funcion tiene complejidad computacional `O(n)`.
 
 ##### Funcion `void *lista_buscar(lista_t *lista, bool (*criterio)(void *, void *),void *contexto)`:
-
-```c
-	if (!lista || !criterio)
-		return NULL;
-	bool encontrado = false;
-	nodo_t *actual = lista->principio;
-	while (actual != NULL && !encontrado) {
-		encontrado = criterio(actual->elemento, contexto);
-		if (!encontrado)
-			actual = actual->siguiente;
-	}
-	return (encontrado) ? actual->elemento : NULL;
-```
 
 En este caso, la funcion a analizar vemos que si tiene una funcion de comparacion en sus parametros `bool (*criterio)(void *, void *)` por la cual podemos comparar los elementos de la lista. Aun asi, en el peor de los casos la funcion nunca devolveria true hasta que se haya dejado de iterar la lista, logrando llamar a la funcion **N veces**, **siendo N la cantidad de elementos**.
 Si buscamos analizar la complejidad de esta funcion, vemos que se llaman N veces la funcion de criterio, por lo cual la complejidad de `lista_buscar` esta si o si implicada por la de criterio. La funcion `criterio` tiene un tamanio del problema en base al elemento, pero como nuestra funcion de busqueda basa el tamanio del problema en el tamanio de la lista, el tamanio de cada elemento resulta insignificante, por lo cual la funcion resulta `O(n)`.
 
 ##### Funcion `int lista_iterar(lista_t *lista, bool (*f)(void *, void *), void *contexto)`:
 
-```c
-	if (!lista || !f)
-		return 0;
-	int iterados = 0;
-	bool continuar = true;
-	nodo_t *actual = lista->principio;
-	while (actual != NULL && continuar) {
-		continuar = f(actual->elemento, contexto);
-		actual = actual->siguiente;
-		iterados++;
-	}
-	return iterados;
-```
 Al igual que la funcion anterior, esta misma tambien se encarga de iterar la lista un maximo de N veces, haciendo en cada iteracion un llamado a la funcion `f` pasada por parametro, como mencionamos mas arriba: Si buscamos analizar la complejidad de esta funcion, vemos que se llaman N veces la funcion f, por lo cual la complejidad de `lista_iterar` esta si o si implicada por f. La funcion `criterio` tiene un tamanio del problema en base al elemento, pero como nuestra funcion de iteracion basa el tamanio del problema en el tamanio de la lista, el tamanio de cada elemento resulta insignificante, por lo cual la funcion resulta `O(n)`.
 
 ##### Funcion `void lista_destruir(lista_t *lista)`:
-```c
-{
-	if (!lista)
-		return;
-	nodo_t *a_destruir = lista->principio;
-	nodo_t *siguiente_a_destruir;
-	while (a_destruir != NULL) {
-		siguiente_a_destruir = a_destruir->siguiente;
-		free(a_destruir);
-		a_destruir = siguiente_a_destruir;
-	}
-	free(lista);
-}
-```
 
 Esta funcion debe ser llamada una vez se termino de usar el TDA, la misma se encarga de liberar toda la memoria perteneciente a la lista exceptuando cada elemento, los cuales deberan ser liberados por el usuario. Por ultimo, se libera la memoria del puntero al struct en el heap.
 A la hora de analizar la complejidad de esta funcion vemos nuevamente una iteracion por `N` nodos, mediante en el cual hacemos 1 accion constante por cada uno. Por lo tanto, la funcion encargada de destruir la lista tiene complejidad computacional `O(n)`.
@@ -372,180 +193,61 @@ A la hora de analizar la complejidad de esta funcion vemos nuevamente una iterac
 
 ##### Funcion `pila_t *pila_crear()`:
 
-```c
-{
-	pila_t *p = malloc(sizeof(pila_t));
-	if (!p)
-		return NULL;
-	p->lista = lista_crear();
-	if (!p->lista) {
-		free(p);
-		return NULL;
-	}
-
-	return p;
-}
-```
 Vemos que la funcion encargada de crear la pila hace lo mismo que la de crear la lista solo que esta misma guarda un puntero a un struct pila en memoria, la complejidad de la funcion se ve dada como constante debido a que simplemente se dan acciones de declaracion de variables como reserva de memoria.
 
 ##### Funcion `bool pila_apilar(pila_t *pila, void *elemento)`:
 
-```c
-{
-	if (!pila)
-		return false;
-	bool insertado = lista_insertar_en_posicion(pila->lista, 0, elemento);
-	return insertado;
-}
-```
-
 La funcion vemos que se encarga de insertar un elemento en el tope de la pila, la cual utiliza la implementacion de insertar en posicion de lista tomando como posicion la cero, es decir, utiliza el puntero al inicio por lo cual podemos decir que `pila_apilar` es `O(1)`.
 
 ##### Funcion `void *pila_desapilar(pila_t *pila)`:
-```c
-{
-	if (!pila || lista_tamanio(pila->lista) == 0)
-		return NULL;
-	void *sacado = lista_sacar_de_posicion(pila->lista, 0);
-	return sacado;
-}
-```
 
 Al igual que la funcion anterior, esta llama a la implementacion de `lista_tamanio` el cual devuelve el tamanio de la pila en este caso y a su vez utiliza la funcion `lista_sacar_de_posicion` con la posicion cero para nuevamente utilizar un llamado constante y respetar la restriccion del enunciado.
 
 ##### Funcion `bool pila_vacia(pila_t *pila)`:
-```c
-{
-	if (!pila)
-		return false;
-	return (lista_tamanio(pila->lista) == 0);
-}
-```
 
 Devuelve si la pila esta vacia utilizando la funcion lista_tamanio, la cual es de complejidad constante, por lo cual `pila_vacia` es `O(1)`.
 
 
 ##### Funcion `size_t pila_tamanio(pila_t *pila)`:
-```c
-{
-	if (!pila)
-		return 0;
-	return lista_tamanio(pila->lista);
-}
-```
 
 Devuelve el tamanio de la pila la cual corresponde al tamanio del campo lista, por lo cual utilizo `lista_tamanio` de complejidad constante.
 
 ##### Funcion `void *pila_tope(pila_t *pila)`:
-```c
-{
-	if (!pila)
-		return NULL;
-	void *elemento = lista_obtener_elemento(pila->lista, 0);
-	return elemento;
-}
-```
 
 Devuelve el elemento que se encuentra en el `nodo tope` es decir, el unico elemento visible a la hora de trabajar con pilas, de esta forma la implemento utilizando `lista_obtener_elemento` con la posicion cero, logrando una complejidad constante debido a que utilizo el puntero al principio de la lista.
 
 ##### Funcion `void pila_destruir(pila_t *pila)`:
-```c
-{
-	if (!pila)
-		return;
-	lista_destruir(pila->lista);
-	free(pila);
-}
-```
+
 
 Por ultimo, la funcion encargada de destruir la pila lo que hace es llamar a la funcion lista destruir la cual se encarga de destruir cada uno de los nodos como fue explicado previamente, de esta forma luego se libera la memoria reservada en el heap para el struct pila. Por lo explicado en `lista_destruir` la funcion tiene complejidad computacional `O(n)`.
 
 ### Cola:
 
 ##### Funcion `cola_t *cola_crear()`:
-```c
-{
-	cola_t *c = malloc(sizeof(cola_t));
-	if (!c)
-		return NULL;
-	c->lista = lista_crear();
-	if (!c->lista) {
-		free(c);
-		return NULL;
-	}
 
-	return c;
-}
-```
 Vemos que la funcion encargada de crear la cola hace lo mismo que la de crear la lista solo que esta misma guarda un puntero a un struct cola en memoria, la complejidad de la funcion se ve dada como constante debido a que simplemente se dan acciones de declaracion de variables como reservas de memoria.
 
 ##### Funcion `bool cola_encolar(cola_t *cola, void *elemento)`:
-```c
-{
-	if (!cola)
-		return false;
-	bool insertado = lista_insertar(cola->lista, elemento);
-	return insertado;
-}
-```
 
 Esta funcion es la cual se encarga de insertar los elementos en la cola, la cual esta implementada mediante la funcion `lista_insertar` para no tener que reescribir codigo, ya que gracias a mi implementacion de lista puedo reutilizar los punteros de la misma al final para lograr que esta insercion sea constante en este caso en especifico. De esta forma se deduce que la funcion tiene complejidad computacional `O(n)`.
 
 ##### Funcion `void *cola_desencolar(cola_t *cola)`:
-```c
-{
-	if (!cola)
-		return NULL;
-	void *sacado = lista_sacar_de_posicion(cola->lista, 0);
-	return sacado;
-}
-```
 
 La funcion de desencolar decidi aplicarla nuevamente utilizando la funcion `lista_sacar_de_posicion` con la posicion constante cero, de esta forma, se crea la idea de una cola la cual saca elementos de `un lado` y los inserta `del otro`, a su vez, de esta forma la funcion queda constante ya que a pesar de que nuestra funcion de sacar de posicion es `O(n)` en este caso en especifico siempre sera constante por lo cual la funcion `cola_desencolar` queda `O(1)`.
 
 ##### Funcion `bool cola_vacia(cola_t *cola)`:
-```c
-{
-	if (!cola)
-		return false;
-	return (lista_tamanio(cola->lista) == 0);
-}
-```
 
 La funcion `cola_vacia` como dice su nombre se encarga de decir si la cola tiene o no elementos, esto decidi implementarlo utilizando el campo `cantidad_elementos` de la lista con la funcion `lista_tamanio` de esta forma, se logra una funcion de **complejidad constante** ya que sin importar el tamanio de la lista siempre sera una accion constante.
 
 ##### Funcion `size_t cola_tamanio(cola_t *cola)`:
-```c
-{
-	if (!cola)
-		return 0;
-	return (lista_tamanio(cola->lista));
-}
-```
 
 Esta funcion se encarga de ver el tamanio de la cola otra vez implementando la funcion `lista_tamanio`, logrando nuevamente una **complejidad constante**.
 
 ##### Funcion `void *cola_frente(cola_t *cola)`:
-```c
-{
-	if (!cola)
-		return NULL;
-	void *elemento = lista_obtener_elemento(cola->lista, 0);
-	return elemento;
-}
-```
 
 Esta funcion se encarga de ver lo que esta en la parte delantera de la cola, nuevamente, se reutiliza una funcion del TDA lista, en este caso, `lista_obtener_elemento` la cual en esta aplicacion posee **complejidad constante** debido a la implementacion de nuestra lista, accede al nodo que apunta el principio y devuelve el elemento.
 
 ##### Funcion `void cola_destruir(cola_t *cola)`:
-```c
-{
-	if (!cola)
-		return;
-	lista_destruir(cola->lista);
-	free(cola);
-}
-```
 
 Esta funcion se encarga de liberar toda aquella memoria reservada durante el uso del TDA **cola**, la cual esta implementada mediante el uso de la funcion `lista_destruir` para destruir el puntero a la lista de nuestra estructura en memoria. Luego se libera la memoria reservada en el heap para nuestra cola, logrando en general una complejidad lineal `O(n)`.
 

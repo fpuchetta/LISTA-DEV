@@ -35,32 +35,32 @@ int main(int argc, char *argv[])
 	lista_insertar(l, &uno);
 	lista_insertar(l, &dos);
 	lista_insertar(l, &tres);
-	
-	lista_insertar_en_posicion(l,0,&uno);
-	printf("tamanio lista: %lu\n",lista_tamanio(l));
+
+	lista_insertar_en_posicion(l, 0, &uno);
+	printf("tamanio lista: %lu\n", lista_tamanio(l));
 	printf("Muestro los elementos usando el iterador interno:\n");
 	int posicion = 0;
 	lista_iterar(l, mostrar_int, &posicion);
-	
+
 	printf("\nMuestro los elementos usando lista_obtener_elemento:\n");
 	for (int i = 0; i < lista_tamanio(l); i++) {
 		int *n = lista_obtener_elemento(l, i);
 		printf("Elemento en posicion %i: %i\n", i, *n);
 	}
-	
-	int* recuperado=lista_sacar_de_posicion(l,3);
-	printf("\nSaque el elemento %i\n",*(recuperado));
-	printf("tamanio lista: %lu\n",lista_tamanio(l));
-	int* eliminado = (int*)lista_sacar_elemento(l, &uno);
-	printf("\nSaque el elemento %i\n",*(eliminado));
-	printf("tamanio lista: %lu\n",lista_tamanio(l));
+
+	int *recuperado = lista_sacar_de_posicion(l, 3);
+	printf("\nSaque el elemento %i\n", *(recuperado));
+	printf("tamanio lista: %lu\n", lista_tamanio(l));
+	int *eliminado = (int *)lista_sacar_elemento(l, &uno);
+	printf("\nSaque el elemento %i\n", *(eliminado));
+	printf("tamanio lista: %lu\n", lista_tamanio(l));
 	printf("\nMuestro los elementos usando lista_obtener_elemento:\n");
 	for (int i = 0; i < lista_tamanio(l); i++) {
 		int *n = lista_obtener_elemento(l, i);
 		printf("Elemento en posicion %i: %i\n", i, *n);
 	}
-	lista_insertar_en_posicion(l,1,&dos);
-	lista_insertar_en_posicion(l,2,&tres);
+	lista_insertar_en_posicion(l, 1, &dos);
+	lista_insertar_en_posicion(l, 2, &tres);
 	printf("\nMuestro los elementos usando el iterador externo:\n");
 	posicion = 0;
 	lista_iterador_t *li;
@@ -72,28 +72,29 @@ int main(int argc, char *argv[])
 		posicion++;
 	}
 	lista_iterador_destruir(li);
-	
+
 	lista_destruir(l);
-	cola_t* cola = cola_crear();
-	
+	cola_t *cola = cola_crear();
+
 	int a = 100, b = 200, c = 300;
-	
+
 	cola_encolar(cola, &a);
 	cola_encolar(cola, &b);
 	cola_encolar(cola, &c);
-	
-	printf("Frente: %d\n", *(int*)cola_frente(cola)); // Debería mostrar 100
-	
+
+	printf("Frente: %d\n",
+	       *(int *)cola_frente(cola)); // Debería mostrar 100
+
 	while (!cola_vacia(cola)) {
-	    int* x = (int*)cola_desencolar(cola);
-		int* frente = (int*)cola_frente(cola);
+		int *x = (int *)cola_desencolar(cola);
+		int *frente = (int *)cola_frente(cola);
 		if (frente)
-		    printf("Frente: %d\n", *frente);
+			printf("Frente: %d\n", *frente);
 		else
-		    printf("Frente: (cola vacía)\n");
-	    printf("Desencolado: %d\n", *x);
+			printf("Frente: (cola vacía)\n");
+		printf("Desencolado: %d\n", *x);
 	}
-	
+
 	cola_destruir(cola);
 
 	return 0;

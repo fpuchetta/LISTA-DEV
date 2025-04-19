@@ -36,7 +36,7 @@ nodo_t *iterar_hasta_posicion(lista_t *lista, int posicion)
 
 lista_t *lista_crear()
 {
-	lista_t *lista_creada = calloc(1,sizeof(lista_t));
+	lista_t *lista_creada = calloc(1, sizeof(lista_t));
 	if (!lista_creada) {
 		return NULL;
 	}
@@ -47,7 +47,7 @@ bool lista_insertar(lista_t *lista, void *elemento)
 {
 	if (!lista)
 		return false;
-	nodo_t *nodo_a_agregar = calloc(1,sizeof(nodo_t));
+	nodo_t *nodo_a_agregar = calloc(1, sizeof(nodo_t));
 	if (nodo_a_agregar == NULL)
 		return false;
 	nodo_a_agregar->elemento = elemento;
@@ -70,7 +70,7 @@ bool lista_insertar_en_posicion(lista_t *lista, int posicion, void *elemento)
 		return false;
 	if (posicion == lista->cantidad_elementos)
 		return lista_insertar(lista, elemento);
-	nodo_t *nodo_nuevo = calloc(1,sizeof(nodo_t));
+	nodo_t *nodo_nuevo = calloc(1, sizeof(nodo_t));
 	if (!nodo_nuevo)
 		return false;
 	nodo_nuevo->elemento = elemento;
@@ -142,7 +142,7 @@ void *lista_sacar_elemento(lista_t *lista, void *elemento)
 	int posicion = lista_buscar_posicion(lista, elemento);
 	if (posicion == -1)
 		return NULL;
-	void* retorno=lista_sacar_de_posicion(lista,posicion);
+	void *retorno = lista_sacar_de_posicion(lista, posicion);
 	return retorno;
 }
 
