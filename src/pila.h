@@ -28,7 +28,7 @@ void *pila_desapilar(pila_t *);
  *
  * Devuelve false si no lo está.
  */
-bool pila_vacía(pila_t *);
+bool pila_vacia(pila_t *);
 
 /**
  * Devuelve la cantidad de elementos presentes en la pila.
